@@ -54,6 +54,12 @@ function enterCertPassword {
 	}
 }
 
+function getCertFilePath {
+	$certFilePath = Read-Host "Enter the path to the signing certificate .p12 file. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path: "
+	defaults write com.bynkii.pwshsigner certFilePath -string $certFilePath
+	return $certFilePath
+}
+
 #globals
 $theUser = whoami
 $prefsFileExists = $false
@@ -78,7 +84,16 @@ if (!(Test-Path -Path "\Users\$theUser\Library\Preferences\com.bynkii.pwshsigner
 }
 
 #check for cert password via prefs. If the return is null or empty, there's no password, create one
+#we don't return the password to this, because we want it existing for as little time as possible
 $certPasswordExists = defaults read com.bynkii.pwshsigner hasCertPassword
 if ([String]::IsNullOrEmpty($certPasswordExists)) {
 	enterCertPassword -userName $theUser
+}
+
+#okay, we have our cert password set up, now do we have the path to the cert itself.
+#yes I know we can do this directly with test-path, but using proper defaults is good
+#here we return the path because that's not sensitive info
+$theCertFilePath = defaults read com.bynkii.pwshsigner certFilePath
+if ([String]::IsNullOrEmpty($theCertFilePath)) {
+	$theCertFilePath = getCertFilePath
 }
