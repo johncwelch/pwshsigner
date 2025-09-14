@@ -97,3 +97,25 @@ $theCertFilePath = defaults read com.bynkii.pwshsigner certFilePath
 if ([String]::IsNullOrEmpty($theCertFilePath)) {
 	$theCertFilePath = getCertFilePath
 }
+
+##we now have the cert file path set up, now to create our cert entry
+
+##get the cert password
+$theCertPassword = security find-generic-password -a "$userName" -w -s "pwshsigner"
+
+#if $theCertPassword is null or empty, we want to call enterCertPassword again to create it
+#even though this is technically a string function, it still works
+if ([String]::IsNullOrEmpty($theCertPassword)) {
+	enterCertPassword -userName $theUser
+}
+#now get the password
+$theCertPassword = security find-generic-password -a "$userName" -w -s "pwshsigner"
+
+#create the certificate
+$cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new("$theCertFilePath","$theCertPassword") 
+
+#just in case, but if this is null at this point, something is really wrong
+if ([String]::IsNullOrEmpty($cert)) {
+	Write-Output "something is terribly wrong, we can't get the cert info. Double check the cert password or the cert .p12 file path/file"
+	Return
+}
