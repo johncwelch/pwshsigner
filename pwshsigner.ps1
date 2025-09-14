@@ -36,7 +36,7 @@ function enterCertPassword {
 		#no keychain entry exists, create it
 		#yes I know, mask is not secure, however, converting from secure in pwsh on macOS kind of sucks. And it's a code signing cert
 		#if you're using "real" passwords for this...
-		$thePassword = Read-Host "Enter the password for the cert you'll be using to sign with" -MaskInput
+		$thePassword = Read-Host "Couldn't find the keychain entry for the certificate password`nEnter the password for the cert you'll be using to sign scripts with" -MaskInput
 		
 		# add the cert password to the keychain
 		security add-generic-password -U -a "$userName" -s "pwshsigner" -w "$thePassword"
