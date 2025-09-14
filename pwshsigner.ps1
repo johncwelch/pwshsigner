@@ -62,7 +62,6 @@ function getCertFilePath {
 
 #globals
 $theUser = whoami
-$prefsFileExists = $false
 
 ##the first thing is to check for the module. If it's not there, tell the user and exit
 if (!(Get-Module -ListAvailable -Name "OpenAuthenticode")) {
@@ -77,10 +76,8 @@ if (!(Get-Module -ListAvailable -Name "OpenAuthenticode")) {
 if (!(Test-Path -Path "\Users\$theUser\Library\Preferences\com.bynkii.pwshsigner.plist")) {
 	#file doesn't exist, create it with donothing key
 	defaults write com.bynkii.pwshsigner donothing ""
-	$prefsFileExists = $true
 } else {
 	#it exists, let the script know it exists
-	$prefsFileExists = $true
 }
 
 #check for cert password via prefs. If the return is null or empty, there's no password, create one
