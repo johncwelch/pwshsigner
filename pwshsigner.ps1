@@ -119,3 +119,11 @@ if ([String]::IsNullOrEmpty($cert)) {
 	Write-Output "something is terribly wrong, we can't get the cert info. Double check the cert password or the cert .p12 file path/file"
 	Return
 }
+
+#so now we have our cert object, let's sign the script file. Get the path to the script
+$scriptFilePath = Read-Host "Enter the path to the script we want to sign. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path: "
+
+#now sign the script
+Set-OpenAuthenticodeSignature -Path $scriptFilePath -Certificate $cert
+
+#and done
