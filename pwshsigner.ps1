@@ -111,6 +111,9 @@ $theCertPassword = security find-generic-password -a "$userName" -w -s "pwshsign
 #create the certificate
 $cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new("$theCertFilePath","$theCertPassword") 
 
+#clear the cert password var
+$theCertPassword = ""
+
 #just in case, but if this is null at this point, something is really wrong
 if ([String]::IsNullOrEmpty($cert)) {
 	Write-Output "something is terribly wrong, we can't get the cert info. Double check the cert password or the cert .p12 file path/file"
