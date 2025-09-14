@@ -127,3 +127,4 @@ $scriptFilePath = Read-Host "Enter the path to the script we want to sign. If th
 Set-OpenAuthenticodeSignature -Path $scriptFilePath -Certificate $cert
 
 #and done
+Return 
