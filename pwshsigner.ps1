@@ -40,12 +40,17 @@ function enterCertPassword {
 		
 		# add the cert password to the keychain
 		security add-generic-password -U -a "$userName" -s "pwshsigner" -w "$thePassword"
-		defaults write com.bynkii.pwshsigner hasCertPassword -bool TRUE
+		
 		# add the key to our prefs
-
+		defaults write com.bynkii.pwshsigner hasCertPassword -bool TRUE
+		
+		#clear $thePassword so the password doesn't easily exist anymore
+		$thePassword = ""
 
 	} else {
-		#keychain entry exists, ask if the user wants to update. if not, exit clean
+		#keychain entry exists, ask if the user wants to update. if not, exit clean after setting preference
+		#correctly since that key missing is the main way people get here
+		defaults write com.bynkii.pwshsigner hasCertPassword -bool TRUE
 	}
 }
 
