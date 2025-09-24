@@ -122,6 +122,7 @@ if ([String]::IsNullOrEmpty($cert)) {
 }
 
 #so now we have our cert object, let's sign the script file. Get the path to the script
+#at some point, we may think about adding a choose file option here, but for now, this will work
 $scriptFilePath = Read-Host "Enter the path to the script we want to sign. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path"
 
 #now sign the script
