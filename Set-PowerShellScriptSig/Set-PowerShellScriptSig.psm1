@@ -1,9 +1,131 @@
+##macOS functions
+function enterCertPassword {
+	param (
+		[Parameter(Mandatory = $true)][string] $userName
+	)
+	
+	## this takes a username param and returns an error code of true if everything worked or false if it didn't
+	## it exists to enter the password for the cert into the keychain as the user running the script
+	## it also writes the hasCertPassword key to the prefs for this script
+
+	#check for existing password, exit cleanly if it exists
+
+	$certPassExists = security find-generic-password -a "$userName" -w -s "pwshsigner"
+
+	if ([String]::IsNullOrEmpty($certPassExists)) {
+		#no keychain entry exists, create it
+		#yes I know, mask is not secure, however, converting from secure in pwsh on macOS kind of sucks. And it's a code signing cert
+		#if you're using "real" passwords for this...
+		$thePassword = Read-Host "Couldn't find the keychain entry for the certificate password`nEnter the password for the cert you'll be using to sign scripts with" -MaskInput
+		
+		# add the cert password to the keychain
+		security add-generic-password -U -a "$userName" -s "pwshsigner" -w "$thePassword"
+		
+		# add the key to our prefs
+		defaults write com.bynkii.pwshsigner hasCertPassword -bool TRUE
+		
+		#clear $thePassword so the password doesn't easily exist anymore
+		$thePassword = ""
+
+	} else {
+		#keychain entry exists, ask if the user wants to update. if not, exit clean after setting preference
+		#correctly since that key missing is the main way people get here
+		defaults write com.bynkii.pwshsigner hasCertPassword -bool TRUE
+	}
+}
+
+function getCertFilePath {
+	$certFilePath = Read-Host "Enter the path to the signing certificate .p12 file. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path"
+	defaults write com.bynkii.pwshsigner certFilePath -string $certFilePath
+	return $certFilePath
+}
+
 function Set-WinPowerShellSig {
 	write-host "Windows function"
 }
 
 function Set-MacPowerShellSig {
-	write-host "macOS function"
+	#globals
+	$theUser = whoami
+	$theCertPassword = ""
+
+	###requirements checks
+
+	##test for macOS
+	if (-Not $IsMacOS) {
+		Write-Output "This module only runs on macOS, exiting"
+		Exit
+	}
+
+	##check for the module. If it's not there, tell the user and exit
+	if (!(Get-Module -ListAvailable -Name "OpenAuthenticode")) {
+		Write-Output "The OpenAuthenticode Module was not found on your machine. This is required for this module to work."
+		Write-Output "To install, from your PowerShell window, run: Install-Module -Name OpenAuthenticode -Scope <CurrentUser\AllUsers"
+		Write-Output "If you want to install for AllUsers scope, the command has to be run as root"
+		Write-Output "Exiting"
+		Return
+	}
+
+
+	#check for our preferences file
+	if (!(Test-Path -Path "\Users\$theUser\Library\Preferences\com.bynkii.pwshsigner.plist")) {
+		#file doesn't exist, create it with donothing key
+		defaults write com.bynkii.pwshsigner donothing ""
+	} else {
+		#it exists, let the script know it exists
+	}
+
+	#check for cert password via prefs. If the return is null or empty, there's no password, create one
+	#we don't return the password to this, because we want it existing for as little time as possible
+	$certPasswordExists = defaults read com.bynkii.pwshsigner hasCertPassword
+	if ([String]::IsNullOrEmpty($certPasswordExists)) {
+		enterCertPassword -userName $theUser
+	}
+
+	#okay, we have our cert password set up, now do we have the path to the cert itself.
+	#yes I know we can do this directly with test-path, but using proper defaults is good
+	#here we return the path because that's not sensitive info
+	$theCertFilePath = defaults read com.bynkii.pwshsigner certFilePath
+	if ([String]::IsNullOrEmpty($theCertFilePath)) {
+		$theCertFilePath = getCertFilePath
+	}
+
+	##we now have the cert file path set up, now to create our cert entry
+
+	#get the cert password
+	$theCertPassword = security find-generic-password -a "$theUser" -w -s "pwshsigner"
+
+	#if $theCertPassword is null or empty, we want to call enterCertPassword again to create it
+	if ([String]::IsNullOrEmpty($theCertPassword)) {
+		enterCertPassword -userName $theUser
+		#now get the password
+		$theCertPassword = security find-generic-password -a "$theUser" -w -s "pwshsigner"
+	}
+
+	#create the certificate
+	$cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new("$theCertFilePath","$theCertPassword")
+
+	#clear the cert password var
+	$theCertPassword = ""
+
+	#just in case, but if this is null at this point, something is really wrong
+	if ([String]::IsNullOrEmpty($cert)) {
+		Write-Output "something is terribly wrong, we can't get the cert info. Double check the cert password or the cert .p12 file path/file"
+		Return
+	}
+	
+	#so now we have our cert object, let's sign the script file. Get the path to the script
+	#at some point, we may think about adding a choose file option here, but for now, this will work
+	$scriptFilePath = Read-Host "Enter the path to the script we want to sign. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path"
+
+	#now sign the script
+	Set-OpenAuthenticodeSignature -Path $scriptFilePath -Certificate $cert
+
+	#and done. We don't return anything because if there's an error here, set-openauthenticode will flash it for us
+	#and if there's not an error, we don't care
+	Return 
+
+	#write-host "macOS function"
 }
 
 Export-ModuleMember -Function Set-MacPowerShellSig
