@@ -77,7 +77,7 @@
 		PSData = @{
     
 			# Tags applied to this module. These help with module discovery in online galleries.
-			Tags = @("macOS","Mac","choose_file_name","AppleScript","AppleScript_Bridge")
+			Tags = @("scriptsigning", "script-signing", "macOS-powershell")
     
 			# A URL to the license for this module.
 			LicenseUri = 'https://github.com/johncwelch/Get-PSChooseFileName/blob/main/LICENSE'
