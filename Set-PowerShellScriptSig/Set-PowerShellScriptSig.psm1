@@ -1,3 +1,36 @@
+##windows functions
+function getCertThumbprint {
+	#get every user cert for current user
+	$myCerts = Get-ChildItem -Path Cert:CurrentUser\My
+
+	#create a list of objects we'll use to collect signing certs (and test for none)
+	$mySigningCerts = [System.Collections.Generic.List[psobject]]::New()
+
+	#get the code signing certs
+	foreach ($item in $myCerts) {
+		#we just use the enchancedKeyUsageList. all signing certs have this (at least for now)
+		$enhancedKeyUsageList = $item | Select-Object -ExpandProperty EnhancedKeyUsageList
+
+		#if it has the right friendly name, add it to $mySigningCerts
+		if ($enhancedKeyUsageList.FriendlyName -eq "Code Signing") {
+			$mySigningCerts.Add($item)
+		}
+	}
+
+	if ($mySigningCerts.Count -lt 1) {
+		#no signing certs
+		return "nocerts"
+	} else {
+		foreach ($item in $mySigningCerts) {
+			$thumbprint = $item.Thumbprint
+			$issuer = $item.Issuer
+			$friendlyName = $item.FriendlyName
+			$intendedPurpose = $enhancedKeyUsageList.FriendlyName
+			Write-Output "Signing cert found`n`nFriendly Name: $friendlyName`nIssuer: $issuer`nThumbprint: $thumbprint`nIntended Purpose: $intendedPurpose`n`n"
+		}
+	}
+}
+
 ##macOS functions
 function enterCertPassword {
 	param (
@@ -41,7 +74,11 @@ function getCertFilePath {
 }
 
 function Set-WinPowerShellSig {
-	write-host "Windows function"
+	#test for windows
+	if (-Not $IsWindows) {
+		Write-Output "This function only runs on Windows, exiting"
+		Exit
+	}
 }
 
 function Set-MacPowerShellSig {
@@ -53,7 +90,7 @@ function Set-MacPowerShellSig {
 
 	##test for macOS
 	if (-Not $IsMacOS) {
-		Write-Output "This module only runs on macOS, exiting"
+		Write-Output "This function only runs on macOS, exiting"
 		Exit
 	}
 
