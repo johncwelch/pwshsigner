@@ -31,6 +31,8 @@ function getCertThumbprint {
 	}
 }
 
+
+
 ##macOS functions
 function enterCertPassword {
 	param (
@@ -74,11 +76,74 @@ function getCertFilePath {
 }
 
 function Set-WinPowerShellSig {
+	
+	param (
+		[Parameter(Mandatory = $false)][string] $scriptPath = ""
+	)
+	
 	#test for windows
 	if (-Not $IsWindows) {
 		Write-Output "This function only runs on Windows, exiting"
 		Exit
 	}
+
+	#framework to use a file browser
+	Add-Type -AssemblyName System.Windows.Forms
+
+	##globals
+	$theThumbPrint = ""
+	$storedThumbPrint = ""
+
+	##Test to see if we already have this stored. If we do, use that thumbprint to sign
+	##if not, create the settings file with the desired thumbprint
+	##This checks for the settings file being there
+
+	if (!(Test-Path $env:APPDATA\pwshsigner.json)) {
+		#there's no settings file
+		##run GetCertThumbprint to show the available certs
+		$hasCerts = getCertThumbprint
+		if ($hasCerts -eq 'nocerts') {
+			#no signing certs found
+			Write-Output "You have no signing certs in the local cert store.`nPlease get a signing cert before running this command"
+			return
+		}
+
+		#we have to put this here, because otherwise read-host blanks the resulst from getCertThumbprint
+		#read-host is often dumb
+		$theThumbPrint = Read-Host "Enter the thumbprint of the cert you want to use`nNOTE: this wil be written into the settings for this module, so choose correctly!"
+		if([string]::IsNullOrEmpty($theThumbPrint)) {
+			#if the thumbprint is empty, no sense in continuing
+			Write-Output "Thumbprint is null or empty, exiting."
+			return
+		} else {
+			#create the setting json file in user's appdata folder
+			$settings = @{"Thumbprint" = "$theThumbPrint"}
+			$theJsonSettings = $settings|ConvertTo-Json
+			Write-Output "Creating JSON settings file with this thumbprint in $env:APPDATA\pwshsigner.json"
+			Out-File -FilePath $env:APPDATA\pwshsigner.json -InputObject $theJsonSettings
+
+			#so we don't have to read a file to get a value we already have
+			$storedThumbPrint = $theThumbPrint
+		}
+	} else {
+		#read the settings file contents
+		$pwshSignerRaw = Get-Content $env:APPDATA\pwshsigner.json
+
+		#convert that array to a string
+		$pwshSignerString = $pwshSignerRaw | Out-String
+
+		#read the actual JSON data in the string
+		$pwshSignerJsonSettings = ConvertFrom-Json $pwshSignerString
+
+		#grab the thumbprint value
+		$storedThumbPrint = $pwshSignerJsonSettings.Thumbprint
+	}
+
+	#get the signing cert from the local store as a certificate object by thumbprint
+	$theCert = Get-ChildItem -Path Cert:CurrentUser\My\$storedThumbPrint
+
+	#now that we have the cert, time to sign some scripts!! or executables. Whatever.
+
 }
 
 function Set-MacPowerShellSig {
@@ -160,9 +225,7 @@ function Set-MacPowerShellSig {
 
 	#and done. We don't return anything because if there's an error here, set-openauthenticode will flash it for us
 	#and if there's not an error, we don't care
-	Return 
-
-	#write-host "macOS function"
+	Return
 }
 
 Export-ModuleMember -Function Set-MacPowerShellSig
