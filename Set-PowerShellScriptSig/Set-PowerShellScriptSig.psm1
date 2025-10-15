@@ -142,8 +142,37 @@ function Set-WinPowerShellSig {
 	#get the signing cert from the local store as a certificate object by thumbprint
 	$theCert = Get-ChildItem -Path Cert:CurrentUser\My\$storedThumbPrint
 
-	#now that we have the cert, time to sign some scripts!! or executables. Whatever.
+	#Since the script can be passed a filepath, check for that. If not there, pop the filepicker
+	if ([string]::IsNullOrEmpty($scriptPath)) {
+		#no path, pop the dialog
 
+		#create the file browser object, for only powershell files and executables
+		$fileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{
+			RestoreDirectory = $true
+
+			#filetype filter
+			Filter = "PowerShell Files (*.ps1;*.psm1;*.psd1;*.ps1xml)|*.ps1;*.psm1;*.psd1;*.ps1xml;|Executables(*.exe)|*.exe;"
+			MultiSelect = $true
+		}
+
+		#display the filebrowser
+		$null = $fileBrowser.ShowDialog()
+
+		#set the filepath(s) to a var. Using .filenames returns an array, so return type is consistent, easier that way
+		$filesToSign = $fileBrowser.filenames
+
+		#check for cancel. If count of $filesToSign is 0, cancel was hit
+		if ($filesToSign.Length -lt 1) {
+			Return
+		} else {
+			foreach ($item in $filesToSign) {
+				Set-AuthenticodeSignature -FilePath $item -Certificate $theCert
+			}
+		}
+	} else {
+		#path was passed to module func
+		Set-AuthenticodeSignature -FilePath $scriptPath -Certificate $theCert
+	} 
 }
 
 function Set-MacPowerShellSig {
