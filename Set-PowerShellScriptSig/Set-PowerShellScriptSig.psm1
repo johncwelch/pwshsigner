@@ -84,7 +84,7 @@ function Set-WinPowerShellSig {
 	#test for windows
 	if (-Not $IsWindows) {
 		Write-Output "This function only runs on Windows, exiting"
-		Exit
+		Return
 	}
 
 	#framework to use a file browser
@@ -185,7 +185,7 @@ function Set-MacPowerShellSig {
 	##test for macOS
 	if (-Not $IsMacOS) {
 		Write-Output "This function only runs on macOS, exiting"
-		Exit
+		Return
 	}
 
 	##check for the module. If it's not there, tell the user and exit
@@ -260,11 +260,12 @@ function Set-MacPowerShellSig {
 Export-ModuleMember -Function Set-MacPowerShellSig
 Export-ModuleMember -Function Set-WinPowerShellSig
 
+
 # SIG # Begin signature block
 # MIIMgQYJKoZIhvcNAQcCoIIMcjCCDG4CAQMxDTALBglghkgBZQMEAgEwewYKKwYB
 # BAGCNwIBBKBtBGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDcfiGiX9qhfepq
-# BZHeiPSB0VvKLfVrB5Z/RpY2uj874qCCCawwggQEMIIC7KADAgECAggYeqmowpYh
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDWTTSSDCt4SI7e
+# ou2FjxFxhGXKGZY08BkQLSERgOEUF6CCCawwggQEMIIC7KADAgECAggYeqmowpYh
 # DDANBgkqhkiG9w0BAQsFADBiMQswCQYDVQQGEwJVUzETMBEGA1UEChMKQXBwbGUg
 # SW5jLjEmMCQGA1UECxMdQXBwbGUgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxFjAU
 # BgNVBAMTDUFwcGxlIFJvb3QgQ0EwHhcNMTIwMjAxMjIxMjE1WhcNMjcwMjAxMjIx
@@ -321,11 +322,11 @@ Export-ModuleMember -Function Set-WinPowerShellSig
 # aW9uIEF1dGhvcml0eTETMBEGA1UECgwKQXBwbGUgSW5jLjELMAkGA1UEBhMCVVMC
 # CDj+3VBykqv0MAsGCWCGSAFlAwQCAaB8MBAGCisGAQQBgjcCAQwxAjAAMBkGCSqG
 # SIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3
-# AgEVMC8GCSqGSIb3DQEJBDEiBCBITjY/LC99f6ozlcFWTQyiZ9ZROVQo0iQ5cR9T
-# Z1IxxzALBgkqhkiG9w0BAQEEggEAqWQsRKU43G4EewrhrZz5DUV2o9g17l45+E+x
-# Gem89UCxXK5Kv4wVDFaKuxYDuSWF4uavePXN0kV4aTfV+eMI/5+jvB8I3uiqdvmC
-# 9yyTxV/WUMk1Y3b1EVV99FG272Q0RzTzpcwVY7iT5CFLPsxAb6A1OXrbEY4octro
-# Ln6/3bg+hF1B6UzmuAp9tpJh+EyVkf//MXAX3VIRZ7QJrmLtbVe4KUK64VOQpRy8
-# pWHyn22WpNtlmy0Fcwh6qD5PJDV6YtXdKzdW5IFG4NFPHwuJ1V3Jesm3yOk+k4/e
-# vxVkjnAbSQYIN4jw0Ba07beqzO3N6nI7DcpCVnPzNr0oIBOk6Q==
+# AgEVMC8GCSqGSIb3DQEJBDEiBCDBauQSjtp+xa4RwDmloXrYNLbFHBsxMwVFNOqH
+# p2AzmTALBgkqhkiG9w0BAQEEggEALt/CcHQis2lNXvlyQyUFzFxldNYyh+xd1ILo
+# x7w4Yfikz6fffrdTVQBob4Q/4tkcGOHtRhNSbYs5Jxf5uNquTEMKGG497TTtI31I
+# ZxsXF2jkk+wHarCom9EpcyuNrpvY7MBdSSLjUsM98yDq+tZ0YMJHilOknp/qUvOO
+# HAZkEmagYI3jUieJQccq/4Gz2cHxYWKZ3WWhDYb3/g/r5cJlIZmCtyDFE+0HENxR
+# ACArNtaZ07q1maTJKYsQD5eSUVhC9h9jBbDGvBeyPY+XC/qc6cAqxJwXuzkvwDDF
+# NlJJr0NFwWtYXfGd8gertJ+qMg9/0lVJhb6tEjqY3rLl7RVeZQ==
 # SIG # End signature block
