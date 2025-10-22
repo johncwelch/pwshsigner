@@ -15,7 +15,7 @@
 	CopyRight = '(c) John C. Welch, All Rights Reserved'
 	Description = 'A module to make signing scripts easier'
 	# Minimum version of the PowerShell engine required by this module
-	PowerShellVersion = '7.0'
+	# PowerShellVersion = '7.0'
 	
 	# Name of the PowerShell host required by this module
 	# PowerShellHostName = ''
@@ -115,8 +115,8 @@
 # SIG # Begin signature block
 # MIIMgQYJKoZIhvcNAQcCoIIMcjCCDG4CAQMxDTALBglghkgBZQMEAgEwewYKKwYB
 # BAGCNwIBBKBtBGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCA3oj4x3BTa2mRC
-# Daw910aFjsxj+Ja2EuvnMRtHInJsnaCCCawwggQEMIIC7KADAgECAggYeqmowpYh
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCYtnRYBb5eyUC6
+# z8uzBvIvDaPnKfuseo0OeE8Rkl4ALaCCCawwggQEMIIC7KADAgECAggYeqmowpYh
 # DDANBgkqhkiG9w0BAQsFADBiMQswCQYDVQQGEwJVUzETMBEGA1UEChMKQXBwbGUg
 # SW5jLjEmMCQGA1UECxMdQXBwbGUgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxFjAU
 # BgNVBAMTDUFwcGxlIFJvb3QgQ0EwHhcNMTIwMjAxMjIxMjE1WhcNMjcwMjAxMjIx
@@ -173,11 +173,11 @@
 # aW9uIEF1dGhvcml0eTETMBEGA1UECgwKQXBwbGUgSW5jLjELMAkGA1UEBhMCVVMC
 # CDj+3VBykqv0MAsGCWCGSAFlAwQCAaB8MBAGCisGAQQBgjcCAQwxAjAAMBkGCSqG
 # SIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3
-# AgEVMC8GCSqGSIb3DQEJBDEiBCABrRetIDki3sgM+Pk60JzOk/MuLaSu0Ryk4Fue
-# 7vdUDDALBgkqhkiG9w0BAQEEggEAKbxjzoze0kRWXRKx/W+YU2d1ffv1FmG8K4OS
-# hN/eSlSE52IIanTFdjisj9fyThoZOJC8ruuFzrR+mh1+FQlS5dezDY/Ru1VfxJRH
-# V1NHrmAJ5absZAhuVNev6wdYSWT7YndQvWmiA60B4mfQiMv5hSbNSk+tTITG1Q6H
-# dwu5s6BMv2f993d9lwFiXuhzhZ0gpAWW1q//c2GwcvsuzkeQkPpx0L4hEW6B3kK7
-# DAPXHoWVp4h0dA9GoqzoA4ymGCLNk+ZlJD2LgjSIBbKs4/zT9aGw3VCF283MzrWE
-# tbFKZUBwmIufJ4g8/oOjS9tRg4JXX5mPPEg9//34y8d91XV/pw==
+# AgEVMC8GCSqGSIb3DQEJBDEiBCCHwAj4SHfHvVbqP/+6HuIDsiFVOCK2DpsTXqDQ
+# iCQH9DALBgkqhkiG9w0BAQEEggEAXxkCoZA1pzZIXYbBQ75LK5e4lHVRTI1nRvjT
+# HkWuVseSyzwYwVgycJ0EoUU4lfMVdSKU+WrYLv0BsLFaGGkveIUgZATcXBGr7EvJ
+# F/l1cvvGNFkJgbb1myKtxrrp8FrGwqEIk0Fdz6LRvjmNq/DSXu6MszUR3HYcem4M
+# 2Z7MBgo5+uOMzxPxFNyRN+tvXjnysD3xDM/nquzKAQVcS0jUrq7L32kdlO4q4mUf
+# wMXaXR+x2pwMeShsrnrxHo/tfnuMnBb91gtizoKqJlNVga2lv1K9iN03NqOiHWfr
+# 4J0XWZ119RLComiwaedx+rWtTnauQxUjSsiskXrdlzo22OmgXw==
 # SIG # End signature block
