@@ -177,6 +177,11 @@ function Set-WinPowerShellSig {
 }
 
 function Set-MacPowerShellSig {
+
+	param (
+		[Parameter(Mandatory = $false)][string] $scriptPath = ""
+	)
+
 	#globals
 	$theUser = whoami
 	$theCertPassword = ""
@@ -247,11 +252,15 @@ function Set-MacPowerShellSig {
 	}
 	
 	#so now we have our cert object, let's sign the script file. Get the path to the script
-	#at some point, we may think about adding a choose file option here, but for now, this will work
-	$scriptFilePath = Read-Host "Enter the path to the script we want to sign. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path"
+	#at some point, we may think about adding a choose file option here, but for now, this will work. 
+	#setup now allows for passing the path to the command.
+	if ([string]::IsNullOrEmpty($scriptPath)) {
+		#path param wasn't used
+		$scriptPath = Read-Host "Enter the path to the script we want to sign. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path"
+	}
 
 	#now sign the script
-	Set-OpenAuthenticodeSignature -Path $scriptFilePath -Certificate $cert
+	Set-OpenAuthenticodeSignature -Path $scriptPath -Certificate $cert
 
 	#and done. We don't return anything because if there's an error here, set-openauthenticode will flash it for us
 	#and if there's not an error, we don't care
@@ -265,8 +274,8 @@ Export-ModuleMember -Function Set-WinPowerShellSig
 # SIG # Begin signature block
 # MIIMgQYJKoZIhvcNAQcCoIIMcjCCDG4CAQMxDTALBglghkgBZQMEAgEwewYKKwYB
 # BAGCNwIBBKBtBGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAjcp9zI1mk4l1G
-# TXoaaH8PiOTGTfE7WfRr7LzN0lWr8KCCCawwggQEMIIC7KADAgECAggYeqmowpYh
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCD2RGPimDDqRenS
+# eSdvYODBiANYDfxydy8RUwV1juRtSKCCCawwggQEMIIC7KADAgECAggYeqmowpYh
 # DDANBgkqhkiG9w0BAQsFADBiMQswCQYDVQQGEwJVUzETMBEGA1UEChMKQXBwbGUg
 # SW5jLjEmMCQGA1UECxMdQXBwbGUgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxFjAU
 # BgNVBAMTDUFwcGxlIFJvb3QgQ0EwHhcNMTIwMjAxMjIxMjE1WhcNMjcwMjAxMjIx
@@ -323,11 +332,11 @@ Export-ModuleMember -Function Set-WinPowerShellSig
 # aW9uIEF1dGhvcml0eTETMBEGA1UECgwKQXBwbGUgSW5jLjELMAkGA1UEBhMCVVMC
 # CDj+3VBykqv0MAsGCWCGSAFlAwQCAaB8MBAGCisGAQQBgjcCAQwxAjAAMBkGCSqG
 # SIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3
-# AgEVMC8GCSqGSIb3DQEJBDEiBCASRBT9E5JGlQDHa1uxjngnfjXIZzYaUO6sMgC5
-# hnABuzALBgkqhkiG9w0BAQEEggEAm09Ogt7lEFoZOR2kSYo0d18J7mfF3NC5dH52
-# xBmdo810iSaQNwoDfAJDo71hPx0qyZT+/vfLDkyBJOShiu8PgDMOkA2yDBnYZe1D
-# 5QW6rJ2vxnscxQG4pEtyHUrLtxDhebl7A85PZeFW/HUXxBTgg+VwaycUC3KJL8zh
-# ntFP10QRlPYePjwjm6VADbAHHNkOVjBPdWkrhzFYyrhwP69Si/unzojHfAG/Z66a
-# hdDvkdf8f84RDdnXXnXgl7IclNn6MqvdxDjes2NEGEGnPWNK9Bpj22oFg9hAF+zz
-# PYVmCx65+a9hlSni/eeZM0TJbqGmtkErPIpR2d067z+htHyFcQ==
+# AgEVMC8GCSqGSIb3DQEJBDEiBCAqpqoKgV3FOjS6Z5ACtEDwRwhQSlnUicar0r8c
+# jVzWVzALBgkqhkiG9w0BAQEEggEAnD2uoSo18BJxIdRnJja7TWg+t+t4FvZtwJpO
+# V7ixvwswtpnVkSqWlJ8LzzaIsca8ZZ2Otz0U+Y+O6KXp/05TtjU8JzzrnxnAzYKA
+# cCxIQlnk/9ibWY76IQ8CoBKVHVGITKWannS5Qs6yxXCjg24MAuSfedOHoBGqD8Nx
+# THhXqW27GvU0VgCrw2qMJ9o56fRT69zwrMxxL08UkqhW9W9dYITf98jY0GWjYTur
+# phzQ1q8Zl/3HjmgunVPRTOvquxYsY3nJxUS1IVhOYifpSihbFS3IY7WXFrMlql+/
+# 3qqYww8UvCpHxj3GNvTPxuhzeJ1uXutNLD7vhL26fLDwxX58xg==
 # SIG # End signature block
