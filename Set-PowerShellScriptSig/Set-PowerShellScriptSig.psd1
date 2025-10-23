@@ -8,7 +8,7 @@
 
 @{
 	RootModule = 'Set-PowerShellScriptSig.psm1'
-	ModuleVersion = '1.0'
+	ModuleVersion = '1.0.1'
 	GUID = 'da91f9ed-c38f-4e7e-9980-b6d37fb97e23'
 	Author = 'John C. Welch'
 	CompanyName = 'Bynkii.com'
@@ -80,10 +80,10 @@
 			Tags = @("scriptsigning", "script-signing", "macOS-powershell")
     
 			# A URL to the license for this module.
-			LicenseUri = 'https://github.com/johncwelch/Get-PSChooseFileName/blob/main/LICENSE'
+			LicenseUri = 'https://github.com/johncwelch/pwshsigner/blob/main/LICENSE'
     
 			# A URL to the main website for this project.
-			ProjectUri = 'https://github.com/johncwelch/Get-PSChooseFileName'
+			ProjectUri = 'https://github.com/johncwelch/pwshsigner'
     
 			# A URL to an icon representing this module.
 			# IconUri = ''
@@ -105,18 +105,20 @@
 	} # End of PrivateData hashtable
     
 	# HelpInfo URI of this module
-	HelpInfoURI = 'https://github.com/johncwelch/Get-PSChooseFileName/wiki'
+	#HelpInfoURI = ''
     
 	# Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
 	# DefaultCommandPrefix = ''
 }
 
 
+
+
 # SIG # Begin signature block
 # MIIMgQYJKoZIhvcNAQcCoIIMcjCCDG4CAQMxDTALBglghkgBZQMEAgEwewYKKwYB
 # BAGCNwIBBKBtBGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCYtnRYBb5eyUC6
-# z8uzBvIvDaPnKfuseo0OeE8Rkl4ALaCCCawwggQEMIIC7KADAgECAggYeqmowpYh
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAq0d2AdVxhaIp8
+# bZ/GsS7ri0WrmKB7m4GW00WpRrveKaCCCawwggQEMIIC7KADAgECAggYeqmowpYh
 # DDANBgkqhkiG9w0BAQsFADBiMQswCQYDVQQGEwJVUzETMBEGA1UEChMKQXBwbGUg
 # SW5jLjEmMCQGA1UECxMdQXBwbGUgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxFjAU
 # BgNVBAMTDUFwcGxlIFJvb3QgQ0EwHhcNMTIwMjAxMjIxMjE1WhcNMjcwMjAxMjIx
@@ -173,11 +175,11 @@
 # aW9uIEF1dGhvcml0eTETMBEGA1UECgwKQXBwbGUgSW5jLjELMAkGA1UEBhMCVVMC
 # CDj+3VBykqv0MAsGCWCGSAFlAwQCAaB8MBAGCisGAQQBgjcCAQwxAjAAMBkGCSqG
 # SIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3
-# AgEVMC8GCSqGSIb3DQEJBDEiBCCHwAj4SHfHvVbqP/+6HuIDsiFVOCK2DpsTXqDQ
-# iCQH9DALBgkqhkiG9w0BAQEEggEAXxkCoZA1pzZIXYbBQ75LK5e4lHVRTI1nRvjT
-# HkWuVseSyzwYwVgycJ0EoUU4lfMVdSKU+WrYLv0BsLFaGGkveIUgZATcXBGr7EvJ
-# F/l1cvvGNFkJgbb1myKtxrrp8FrGwqEIk0Fdz6LRvjmNq/DSXu6MszUR3HYcem4M
-# 2Z7MBgo5+uOMzxPxFNyRN+tvXjnysD3xDM/nquzKAQVcS0jUrq7L32kdlO4q4mUf
-# wMXaXR+x2pwMeShsrnrxHo/tfnuMnBb91gtizoKqJlNVga2lv1K9iN03NqOiHWfr
-# 4J0XWZ119RLComiwaedx+rWtTnauQxUjSsiskXrdlzo22OmgXw==
+# AgEVMC8GCSqGSIb3DQEJBDEiBCAwhx3iM+qoWLKit3D0y/Qkv0YYDm5VxDYhLKAg
+# WaURhTALBgkqhkiG9w0BAQEEggEAlKT15fAuRy7/zvdrX8WWV9eJBRKDgOBBtufz
+# ZpiGltNITqWAe42r12KDX3NnjxirnqX5t1UmXFKscYhllcsyGweMJ/8SIrRfEayG
+# CvpfbUQ0DdDyzXF39B3gsRZGYH00QtWbSt2KPeDHrVNRZyrqfonPbE+anEIAsafE
+# F2F7syIRIuzHTDrZubuBJtSo5oVqc/el72a0JPDHRvO3uaXuiQrNYuHCju0bhWNi
+# vIayH4Ri7Bkakf0hXrn31mG8nifmNplqUvs/i/wzawoV99Q6xPuMklTDtT1aoG4w
+# LtZdWl+uTd9OvhzTU7rNdTvp7KeMBOHbBbgFd4/pQw1+vuIXWA==
 # SIG # End signature block
