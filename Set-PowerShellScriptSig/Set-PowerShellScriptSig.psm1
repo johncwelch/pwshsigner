@@ -38,7 +38,7 @@ function enterCertPassword {
 	param (
 		[Parameter(Mandatory = $true)][string] $userName
 	)
-	
+
 	## this takes a username param and returns an error code of true if everything worked or false if it didn't
 	## it exists to enter the password for the cert into the keychain as the user running the script
 	## it also writes the hasCertPassword key to the prefs for this script
@@ -52,13 +52,13 @@ function enterCertPassword {
 		#yes I know, mask is not secure, however, converting from secure in pwsh on macOS kind of sucks. And it's a code signing cert
 		#if you're using "real" passwords for this...
 		$thePassword = Read-Host "Couldn't find the keychain entry for the certificate password`nEnter the password for the cert you'll be using to sign scripts with" -MaskInput
-		
+
 		# add the cert password to the keychain
 		security add-generic-password -U -a "$userName" -s "pwshsigner" -w "$thePassword"
-		
+
 		# add the key to our prefs
 		defaults write com.bynkii.pwshsigner hasCertPassword -bool TRUE
-		
+
 		#clear $thePassword so the password doesn't easily exist anymore
 		$thePassword = ""
 
@@ -112,7 +112,7 @@ function Set-WinPowerShellSig {
 	param (
 		[Parameter(Mandatory = $false)][string] $scriptPath = ""
 	)
-	
+
 	#test for windows
 	#this version works with PS 5.1
 	if (-Not ($env:OS -eq "Windows_NT")) {
@@ -205,7 +205,7 @@ function Set-WinPowerShellSig {
 	} else {
 		#path was passed to module func
 		Set-AuthenticodeSignature -FilePath $scriptPath -Certificate $theCert
-	} 
+	}
 }
 
 function Set-MacPowerShellSig {
@@ -308,9 +308,9 @@ function Set-MacPowerShellSig {
 		Write-Output "something is terribly wrong, we can't get the cert info. Double check the cert password or the cert .p12 file path/file"
 		Return
 	}
-	
+
 	#so now we have our cert object, let's sign the script file. Get the path to the script
-	#at some point, we may think about adding a choose file option here, but for now, this will work. 
+	#at some point, we may think about adding a choose file option here, but for now, this will work.
 	#setup now allows for passing the path to the command.
 	if ([string]::IsNullOrEmpty($scriptPath)) {
 		#path param wasn't used
@@ -332,8 +332,8 @@ Export-ModuleMember -Function Set-WinPowerShellSig
 # SIG # Begin signature block
 # MIIMgQYJKoZIhvcNAQcCoIIMcjCCDG4CAQMxDTALBglghkgBZQMEAgEwewYKKwYB
 # BAGCNwIBBKBtBGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCD2RGPimDDqRenS
-# eSdvYODBiANYDfxydy8RUwV1juRtSKCCCawwggQEMIIC7KADAgECAggYeqmowpYh
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCC1WLTWtxOPyJsk
+# YU9L0O1LHFNKXaEdG12iL56E3WeWv6CCCawwggQEMIIC7KADAgECAggYeqmowpYh
 # DDANBgkqhkiG9w0BAQsFADBiMQswCQYDVQQGEwJVUzETMBEGA1UEChMKQXBwbGUg
 # SW5jLjEmMCQGA1UECxMdQXBwbGUgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxFjAU
 # BgNVBAMTDUFwcGxlIFJvb3QgQ0EwHhcNMTIwMjAxMjIxMjE1WhcNMjcwMjAxMjIx
@@ -390,11 +390,11 @@ Export-ModuleMember -Function Set-WinPowerShellSig
 # aW9uIEF1dGhvcml0eTETMBEGA1UECgwKQXBwbGUgSW5jLjELMAkGA1UEBhMCVVMC
 # CDj+3VBykqv0MAsGCWCGSAFlAwQCAaB8MBAGCisGAQQBgjcCAQwxAjAAMBkGCSqG
 # SIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3
-# AgEVMC8GCSqGSIb3DQEJBDEiBCAqpqoKgV3FOjS6Z5ACtEDwRwhQSlnUicar0r8c
-# jVzWVzALBgkqhkiG9w0BAQEEggEAnD2uoSo18BJxIdRnJja7TWg+t+t4FvZtwJpO
-# V7ixvwswtpnVkSqWlJ8LzzaIsca8ZZ2Otz0U+Y+O6KXp/05TtjU8JzzrnxnAzYKA
-# cCxIQlnk/9ibWY76IQ8CoBKVHVGITKWannS5Qs6yxXCjg24MAuSfedOHoBGqD8Nx
-# THhXqW27GvU0VgCrw2qMJ9o56fRT69zwrMxxL08UkqhW9W9dYITf98jY0GWjYTur
-# phzQ1q8Zl/3HjmgunVPRTOvquxYsY3nJxUS1IVhOYifpSihbFS3IY7WXFrMlql+/
-# 3qqYww8UvCpHxj3GNvTPxuhzeJ1uXutNLD7vhL26fLDwxX58xg==
+# AgEVMC8GCSqGSIb3DQEJBDEiBCAClulBRVJ9gUsGkgq0W9prmB4pjsw2QDQ+Js2R
+# A72VWzALBgkqhkiG9w0BAQEEggEAdW0rGgZCkuXA5GPKIPLw8jJfZGH+wJ/TdWVi
+# tLNZtAXReq3RMIoN7Orz7IUtcSogO4XMugM4IwGQj/RhZtnE3VfhugGTz25qr6bG
+# kwVEspWjPjoexO7O/SpeB9Cn8b2gHrT7J3yOuRTSSPllwyUpvyhe1zfWH05uA2vl
+# E/bEeGGwBZ1LcZxI7UrLvvWPgBZL+8OZ1Dz6aKEkEDOyZwek4nzmp9A8OrIoJBSy
+# xYGDkwOdFAjqqK78d+eNTv1aHrCUs/oyHlFXSWyIg8bAaDPwck1I84K2EaNcGwJS
+# V3lR5aub1GCUr4ZZxW66p0xokGsERPybhK9ZCXmcVoTGlVQisw==
 # SIG # End signature block
