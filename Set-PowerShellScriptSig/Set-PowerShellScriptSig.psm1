@@ -76,7 +76,39 @@ function getCertFilePath {
 }
 
 function Set-WinPowerShellSig {
-	
+	<#
+	.SYNOPSIS
+	This module makes signing PowerShell scripts on Windows and macOS easier, this help is for the windows functionality
+
+	.DESCRIPTION
+	Given the increased demand to sign PowerShell scripts, this module facilitates that. NOTE: YOU HAVE TO ALREADY HAVE A SIGNING CERT IN YOUR PERSONAL CERT STORAGE FOR THIS MODULE TO WORK! At the moment, this ONLY works with certs in your store (mmc.exe, add in the certificates snap-in.) A future update may allow for cert files if I can get secret storage working robustly and safely. Windows' lack of a keychain-like concept makes this harder than it should be.
+
+	The module can be run with no parameters, in which case you get a file selection dialog that lets you choose one or more powershell (.ps1, .psm1, .psd1, .ps1xml) files to be signed. You can also pass it the path (in double-quotes) to a single PowerShell file and it will sign that. Note that if you pass the module a path as a parameter, it is not checking to make sure you passed it a powershell file. It will try to sign any file you pass it. Be careful.
+
+	The parameter is -scriptPath, string, optional
+
+	If you've never run the module before, it will search for all the code signing scripts in your personal (not machine) certificate store, then ask you to enter the thumbprint for the cert to use. That thumbprint is stored in a json file in AppData\Roaming in your home directory and used from then on. If you want or need to, you can changed the thumbprint in that file manually in any text editor. On all subsequent runs, the module will use that thumbprint.
+
+	If you have no signing certs in your personal certificate store, the module will fuss at you and tell you to exit.
+
+	The module has no specific outputs other than error outputs and a signed powershell script. It does display the standard signing outputs from Set-AuthenticodeSignature, the actual signing step, both success and failure messages.
+
+	Since this script uses the user context to find certificates, if you run this with an admin account, it may not find certs for your non-admin account store. Be careful
+
+	.PARAMETER scriptPath
+	Optional string parameter that should be the path to a PowerShell file in double quotes. If -scriptPath is used, it will sign that file with no feedback.
+
+	.EXAMPLE
+	Running with no parameters:
+	     Set-WinPowerShellSig
+
+	Passing the path to a file:
+	     Set-WinPowerShellSig -scriptPath "C:\Users\myUserName\Desktop\somescript.ps1"
+
+	.NOTES
+	If you're using this module it's assumed you know your way around PowerShell and script signing at least at a conceptual level.
+	#>
+
 	param (
 		[Parameter(Mandatory = $false)][string] $scriptPath = ""
 	)
@@ -177,6 +209,32 @@ function Set-WinPowerShellSig {
 }
 
 function Set-MacPowerShellSig {
+	<#
+	.SYNOPSIS
+	This module makes signing PowerShell scripts on Windows and macOS easier, this help is for the macOS functionality
+
+	.DESCRIPTION
+	Given the increased demand to sign PowerShell scripts, this module facilitates that. The only real prequisites are that you have a cert file, preferably a .p12 file and the password for it, along with the OpenAuthenticode module, which is required for core functionality. On first run, you'll be asked for the path to the cert and the password/passphrase for the cert. The path will be stored in ~/Library/Preferences/com.bynkii.pwshsigner.plist. The password/passphrase will be stored in your keychain via /usr/bin/security, so it's not just existing as plain text. Obviously at certain points in the code, it exists as plain text, but the module tries to minimize that as much as possible.
+
+	The module can be run with no parameters, in which case you'll be asked to enter the path to the powershell (.ps1, .psm1, .psd1, .ps1xml) files to be signed. You can also pass it the path (in double-quotes) to a single PowerShell file and it will sign that. Note that if you pass the module a path as a parameter, it is not checking to make sure you passed it a powershell file. It will try to sign any file you pass it. Be careful. A future update will tie into Display Dialog so you can more easily pick multiple files. Currently it's one file per run, which is tedious, but for now, it shouldn't be a huge problem. I mean, it's not like you can't set up an array of paths and then feed them to the module one at a time or anything ;-)
+
+	The parameter is -scriptPath, string, optional
+
+	The module has no specific outputs other than error outputs and a signed powershell script.
+
+	.PARAMETER scriptPath
+	Optional string parameter that should be the path to a PowerShell file in double quotes. If -scriptPath is used, it will sign that file with no feedback.
+
+	.EXAMPLE
+	Running with no parameters:
+	     Set-MacPowerShellSig
+
+	Passing the path to a file:
+	     Set-MacPowerShellSig -scriptPath "C:\Users\myUserName\Desktop\somescript.ps1"
+
+	.NOTES
+	If you're using this module it's assumed you know your way around PowerShell and script signing at least at a conceptual level.
+	#>
 
 	param (
 		[Parameter(Mandatory = $false)][string] $scriptPath = ""
