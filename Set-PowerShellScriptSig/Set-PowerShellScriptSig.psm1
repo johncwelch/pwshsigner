@@ -69,6 +69,20 @@ function enterCertPassword {
 	}
 }
 
+function getMultipleFilesMac {
+	#always returns a string
+	$theFiles = "choose file of type {`"ps1`",`"psd1`",`"psm1`",`"ps1xml`"} with multiple selections allowed"|/usr/bin/osascript -so
+	if ($theFiles -contains "execution error") {
+		#go do error display dialog function and return error. pass the important part of the error string for the
+		#display text in the dialog
+		return "error"
+	} else {
+		#no errors returned, we have to scrub the "alias " from the front of the path and check for commas. 
+		#Always convert this to a list of string so the signing is easier.
+		#the list conversion should be a function
+	}
+}
+
 function getCertFilePath {
 	$certFilePath = Read-Host "Enter the path to the signing certificate .p12 file. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path"
 	defaults write com.bynkii.pwshsigner certFilePath -string $certFilePath
