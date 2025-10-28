@@ -104,12 +104,12 @@ function stringToListConversion {
 		if ($item.StartsWith("alias ")) {
 			#if it starts with "alias ", we yank that, and trim leading/trailing whitespace
 			#then put it in our string collection
-			$newItem = $item.Substring(6)
-			$newItem = $newItem.Trim()
-			$thePathCollection.Add($newItem)
+			$item = $item.Substring(6)
+			$item = $item.Trim()
+			$thePathCollection.Add($item)
 		} else {
-			$newItem = $item.Trim()
-			$thePathCollection.Add($newItem)
+			$item = $item.Trim()
+			$thePathCollection.Add($item)
 		}
 	}
 
