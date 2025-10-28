@@ -72,13 +72,24 @@ function enterCertPassword {
 function getMultipleFilesMac {
 	#always returns a string
 	$theFiles = "choose file of type {`"ps1`",`"psd1`",`"psm1`",`"ps1xml`"} with multiple selections allowed"|/usr/bin/osascript -so
+	
+	#manage user hitting cancel button
 	if ($theFiles -contains "execution error: User canceled. (-128)") {
+		
+		#user cancelled. Split the string into an array on the :, grab the last part of the error message (-1 is always the last item) 
+		#and remove any leading/trailing whitespace. This becomes the dialog message
 		$theErrorMessage = $theFiles.Split(":")[-1].Trim()
+
+		#dialog title
 		$theErrorTitle = "Choose file canceled"
+
+		#display the dialog
 		displayInfoDialog -dialogText $theErrorMessage -dialogTitle $theErrorTitle
+
+		#return the canceled condition. If we ever have to handle more error types, we'll do that here as well
 		return "cancelled"
 	} else {
-		#no errors returned, we have to scrub the "alias " from the front of the path and check for commas. 
+		#no errors returned, we have to scrub the "alias " from the front of the path. 
 		#Always convert this to a list of string so the signing is easier.
 		#the list conversion should be a function
 	}
@@ -104,8 +115,14 @@ function stringToListConversion {
 		if ($item.StartsWith("alias ")) {
 			#if it starts with "alias ", we yank that, and trim leading/trailing whitespace
 			#then put it in our string collection
+
+			#remove the first six characters, "alias "
 			$item = $item.Substring(6)
+
+			#trim any leading/trailing whitespace
 			$item = $item.Trim()
+
+			#shove the item on to the list
 			$thePathCollection.Add($item)|Out-Null
 		} else {
 			$item = $item.Trim()
