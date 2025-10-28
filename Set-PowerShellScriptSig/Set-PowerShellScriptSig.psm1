@@ -106,15 +106,41 @@ function stringToListConversion {
 			#then put it in our string collection
 			$item = $item.Substring(6)
 			$item = $item.Trim()
-			$thePathCollection.Add($item)
+			$thePathCollection.Add($item)|Out-Null
 		} else {
 			$item = $item.Trim()
-			$thePathCollection.Add($item)
+			$thePathCollection.Add($item)|Out-Null
 		}
 	}
 
 	#return our string collection
 	return $thePathCollection
+}
+
+#converts macOS alias path to POSIX path, which is what's needed to sign the file
+function aliasToPosixPath {
+	param (
+		#we're passing a list of strings, but treating it like an array until
+		[Parameter(Mandatory = $true)][string[]] $filePathArray
+	)
+
+	#create our list of strings to hold the posixified paths
+	$thePosixPaths = [System.Collections.Generic.List[string]]::New()
+
+	#iterate through the array and posix up the paths
+	foreach ($item in $filePathArray) {
+		#build the osascript command
+		$thePosixCommand = "get POSIX path of `"$item`""
+
+		#convert the alias to a POSIX path
+		$item = $thePosixCommand|/usr/bin/osascript -so
+
+		#shove that into the list
+		$thePosixPaths.Add($item)|Out-Null
+	}
+
+	#return the list
+	return $thePosixPaths
 }
 
 #displayDialog() takes some dialog text and a title as parameters, displays the dialog and returns no value.
