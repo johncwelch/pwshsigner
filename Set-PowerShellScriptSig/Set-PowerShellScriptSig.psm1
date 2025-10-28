@@ -83,6 +83,18 @@ function getMultipleFilesMac {
 	}
 }
 
+#displayDialog() takes some dialog text and a title as parameters, displays the dialog and returns no value.
+function displayDialog {
+	#parameters for the dialog (error, info, whatevs)
+	param (
+		[Parameter(Mandatory = $true)][string] $dialogText,
+		[Parameter(Mandatory = $true)][string] $dialogTitle
+	)
+	
+	#dd command
+	"display dialog `"$dialogText`" with title `"$dialogTitle`""|/usr/bin/osascript -so
+}
+
 function getCertFilePath {
 	$certFilePath = Read-Host "Enter the path to the signing certificate .p12 file. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path"
 	defaults write com.bynkii.pwshsigner certFilePath -string $certFilePath
