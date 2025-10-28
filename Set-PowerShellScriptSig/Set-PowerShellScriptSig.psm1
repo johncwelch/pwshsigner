@@ -72,10 +72,11 @@ function enterCertPassword {
 function getMultipleFilesMac {
 	#always returns a string
 	$theFiles = "choose file of type {`"ps1`",`"psd1`",`"psm1`",`"ps1xml`"} with multiple selections allowed"|/usr/bin/osascript -so
-	if ($theFiles -contains "execution error") {
-		#go do error display dialog function and return error. pass the important part of the error string for the
-		#display text in the dialog
-		return "error"
+	if ($theFiles -contains "execution error: User canceled. (-128)") {
+		$theErrorMessage = $theFiles.Split(":")[-1].Trim()
+		$theErrorTitle = "Choose file canceled"
+		displayInfoDialog -dialogText $theErrorMessage -dialogTitle $theErrorTitle
+		return "cancelled"
 	} else {
 		#no errors returned, we have to scrub the "alias " from the front of the path and check for commas. 
 		#Always convert this to a list of string so the signing is easier.
@@ -83,8 +84,41 @@ function getMultipleFilesMac {
 	}
 }
 
+#this converts the string we get from choose file to an array of one or more elements
+function stringToListConversion {
+	param (
+		[Parameter(Mandatory = $true)][string] $filePathString
+	)
+
+	#check for how many times "alias " appears in the return. If one, then it's a single file
+
+	#create an empty list of strings
+	$thePathCollection = [System.Collections.Generic.List[string]]::New()
+	
+	#run split on ", alias ", this converts it to an array of strings. The first item [0] always stars with "alias "
+	#which is manageable. also removes a lot of leading spaces, but we'll trim those anyway
+	$filePathArray = $filePathString.Split(", alias ")
+
+	#now we get rid of the extraneous stuff
+	foreach ($item in $filePathArray) {
+		if ($item.StartsWith("alias ")) {
+			#if it starts with "alias ", we yank that, and trim leading/trailing whitespace
+			#then put it in our string collection
+			$newItem = $item.Substring(6)
+			$newItem = $newItem.Trim()
+			$thePathCollection.Add($newItem)
+		} else {
+			$newItem = $item.Trim()
+			$thePathCollection.Add($newItem)
+		}
+	}
+
+	#return our string collection
+	return $thePathCollection
+}
+
 #displayDialog() takes some dialog text and a title as parameters, displays the dialog and returns no value.
-function displayDialog {
+function displayInfoDialog {
 	#parameters for the dialog (error, info, whatevs)
 	param (
 		[Parameter(Mandatory = $true)][string] $dialogText,
