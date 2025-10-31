@@ -70,11 +70,12 @@ function enterCertPassword {
 }
 
 function getMultipleFilesMac {
+	$fileListString = ""
+	
 	#always returns a string
 	$theFiles = "choose file of type {`"ps1`",`"psd1`",`"psm1`",`"ps1xml`"} with multiple selections allowed"|/usr/bin/osascript -so
-	
 	#manage user hitting cancel button
-	if ($theFiles -contains "execution error: User canceled. (-128)") {
+	if ($theFiles.Contains("execution error: User canceled")) {
 		
 		#user cancelled. Split the string into an array on the :, grab the last part of the error message (-1 is always the last item) 
 		#and remove any leading/trailing whitespace. This becomes the dialog message
@@ -87,12 +88,11 @@ function getMultipleFilesMac {
 		displayInfoDialog -dialogText $theErrorMessage -dialogTitle $theErrorTitle
 
 		#return the canceled condition. If we ever have to handle more error types, we'll do that here as well
-		return "cancelled"
+		$fileListString = "cancelled"
 	} else {
-		#no errors returned, we have to scrub the "alias " from the front of the path. 
-		#Always convert this to a list of string so the signing is easier.
-		#the list conversion should be a function
+		$fileListString = $theFiles
 	}
+	return $fileListString
 }
 
 #this converts the string we get from choose file to an array of one or more elements
@@ -105,7 +105,7 @@ function stringToListConversion {
 
 	#create an empty list of strings
 	$thePathCollection = [System.Collections.Generic.List[string]]::New()
-	
+	$thePathCollection.GetType()
 	#run split on ", alias ", this converts it to an array of strings. The first item [0] always stars with "alias "
 	#which is manageable. also removes a lot of leading spaces, but we'll trim those anyway
 	$filePathArray = $filePathString.Split(", alias ")
@@ -131,6 +131,8 @@ function stringToListConversion {
 	}
 
 	#return our string collection
+	$thePathCollection.GetType()
+	$thePathCollection
 	return $thePathCollection
 }
 
@@ -346,7 +348,7 @@ function Set-MacPowerShellSig {
 	#globals
 	$theUser = whoami
 	$theCertPassword = ""
-
+	$fileList = [System.Collections.Generic.List[string]]::New()
 	###requirements checks
 
 	##test for macOS
@@ -417,11 +419,27 @@ function Set-MacPowerShellSig {
 	#setup now allows for passing the path to the command.
 	if ([string]::IsNullOrEmpty($scriptPath)) {
 		#path param wasn't used
-		$scriptPath = Read-Host "Enter the path to the script we want to sign. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path"
+		#$scriptPath = Read-Host "Enter the path to the script we want to sign. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path"
+
+		#choose file dialog, returns a string of path(s) or "cancelled"
+		$fileString = getMultipleFilesMac 
+
+		#test for cancelled
+		if ($fileString -eq "cancelled") {
+			Write-Output "User Cancelled"
+			return
+		} else {
+			#we have at least one filepath, now lets turn the string into an array
+			$fileList = stringToListConversion -filePathString $fileString
+			Write-Output "The array is: " $fileList[0]
+			Write-Output "the type of the array is: " $fileList.GetType()
+
+			return
+		}
 	}
 
 	#now sign the script
-	Set-OpenAuthenticodeSignature -Path $scriptPath -Certificate $cert
+	#Set-OpenAuthenticodeSignature -Path $scriptPath -Certificate $cert
 
 	#and done. We don't return anything because if there's an error here, set-openauthenticode will flash it for us
 	#and if there's not an error, we don't care
