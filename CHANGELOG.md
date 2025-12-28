@@ -1,0 +1,3 @@
+# CHANGELOG  
+## 20251227 
+Finally got the array thing fixed. If you create a collection of strings, regardless of list/arraylist/array, powershell returns an array. Wild. Also, if you use GetType() on a list or arraylist before you return it from a function, PowerShell inserts a new [0] in the list/arraylist with the GetType() for your list/arraylist in there. Even more wild. Anyway, that's fixed or more correctly I follwed the "don't do that" rule. So now the mac function works at least as well as the windows in that you can pass a single file path as a string, or pass nothing and choose between 1 and n files to be signed.W00t!
