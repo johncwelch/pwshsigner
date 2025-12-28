@@ -15,11 +15,11 @@ On Windows, this uses the thumbprint of the cert in the cert store to generate t
   
 ## Limitations  
 Windows: No cert files used, requires a code-signing cert in the user cert store  
-macOS: No filepicker dialog for multiple files, requires a code-signing cert file, requires the Open-Authenticode module.  
+macOS: requires a code-signing cert file, requires the Open-Authenticode module.  
   
 ## Future plans  
 Windows: allow to also use cert files (if I can get this to work safely without rolling my own nonsense on PowerShell 5.1.)  
-macOS: Add in the Choose File dialog for easier multi-file selection, see if it's possible to generate a cert object directly from the keychain.  
+Both: allow passing an array of paths to the command rather than just a single path as a string
 
 ## More detailed help  
 Each function has a help system so:  
