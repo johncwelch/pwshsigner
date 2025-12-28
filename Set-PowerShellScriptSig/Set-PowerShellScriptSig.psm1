@@ -105,7 +105,7 @@ function stringToListConversion {
 
 	#create an empty list of strings
 	$thePathCollection = [System.Collections.Generic.List[string]]::New()
-	$thePathCollection.GetType()
+		
 	#run split on ", alias ", this converts it to an array of strings. The first item [0] always stars with "alias "
 	#which is manageable. also removes a lot of leading spaces, but we'll trim those anyway
 	$filePathArray = $filePathString.Split(", alias ")
@@ -129,12 +129,9 @@ function stringToListConversion {
 			$thePathCollection.Add($item)|Out-Null
 		}
 	}
-
-	#return our string collection
-	$thePathCollection.GetType()
-	$thePathCollection
 	return $thePathCollection
 }
+
 
 #converts macOS alias path to POSIX path, which is what's needed to sign the file
 function aliasToPosixPath {
@@ -349,6 +346,7 @@ function Set-MacPowerShellSig {
 	$theUser = whoami
 	$theCertPassword = ""
 	$fileList = [System.Collections.Generic.List[string]]::New()
+	$posixPaths = [System.Collections.Generic.List[string]]::New()
 	###requirements checks
 
 	##test for macOS
@@ -419,8 +417,6 @@ function Set-MacPowerShellSig {
 	#setup now allows for passing the path to the command.
 	if ([string]::IsNullOrEmpty($scriptPath)) {
 		#path param wasn't used
-		#$scriptPath = Read-Host "Enter the path to the script we want to sign. If there are spaces`nor special characters, you can escape them, but really`nthat is a silly idea for this kind of path"
-
 		#choose file dialog, returns a string of path(s) or "cancelled"
 		$fileString = getMultipleFilesMac 
 
@@ -431,15 +427,19 @@ function Set-MacPowerShellSig {
 		} else {
 			#we have at least one filepath, now lets turn the string into an array
 			$fileList = stringToListConversion -filePathString $fileString
-			Write-Output "The array is: " $fileList[0]
-			Write-Output "the type of the array is: " $fileList.GetType()
 
-			return
+			#we have our array, now lets convert them to POSIX paths
+			$posixPaths = aliasToPosixPath -filePathArray $fileList
+			
+			#we have our posix paths and the cert info, lets sign them!
+			foreach ($item in $posixPaths) {
+				Set-OpenAuthenticodeSignature -Path $item -Certificate $cert
+			}
 		}
+	} else {
+		#they passed us a path
+		Set-OpenAuthenticodeSignature -Path $scriptPath -Certificate $cert
 	}
-
-	#now sign the script
-	#Set-OpenAuthenticodeSignature -Path $scriptPath -Certificate $cert
 
 	#and done. We don't return anything because if there's an error here, set-openauthenticode will flash it for us
 	#and if there's not an error, we don't care
@@ -453,8 +453,8 @@ Export-ModuleMember -Function Set-WinPowerShellSig
 # SIG # Begin signature block
 # MIIMgQYJKoZIhvcNAQcCoIIMcjCCDG4CAQMxDTALBglghkgBZQMEAgEwewYKKwYB
 # BAGCNwIBBKBtBGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCC1WLTWtxOPyJsk
-# YU9L0O1LHFNKXaEdG12iL56E3WeWv6CCCawwggQEMIIC7KADAgECAggYeqmowpYh
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDPsOfAwwjccD1M
+# CP6VAQKEMPlCA6oBsRUbU9uQ4q8HqaCCCawwggQEMIIC7KADAgECAggYeqmowpYh
 # DDANBgkqhkiG9w0BAQsFADBiMQswCQYDVQQGEwJVUzETMBEGA1UEChMKQXBwbGUg
 # SW5jLjEmMCQGA1UECxMdQXBwbGUgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxFjAU
 # BgNVBAMTDUFwcGxlIFJvb3QgQ0EwHhcNMTIwMjAxMjIxMjE1WhcNMjcwMjAxMjIx
@@ -511,11 +511,11 @@ Export-ModuleMember -Function Set-WinPowerShellSig
 # aW9uIEF1dGhvcml0eTETMBEGA1UECgwKQXBwbGUgSW5jLjELMAkGA1UEBhMCVVMC
 # CDj+3VBykqv0MAsGCWCGSAFlAwQCAaB8MBAGCisGAQQBgjcCAQwxAjAAMBkGCSqG
 # SIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3
-# AgEVMC8GCSqGSIb3DQEJBDEiBCAClulBRVJ9gUsGkgq0W9prmB4pjsw2QDQ+Js2R
-# A72VWzALBgkqhkiG9w0BAQEEggEAdW0rGgZCkuXA5GPKIPLw8jJfZGH+wJ/TdWVi
-# tLNZtAXReq3RMIoN7Orz7IUtcSogO4XMugM4IwGQj/RhZtnE3VfhugGTz25qr6bG
-# kwVEspWjPjoexO7O/SpeB9Cn8b2gHrT7J3yOuRTSSPllwyUpvyhe1zfWH05uA2vl
-# E/bEeGGwBZ1LcZxI7UrLvvWPgBZL+8OZ1Dz6aKEkEDOyZwek4nzmp9A8OrIoJBSy
-# xYGDkwOdFAjqqK78d+eNTv1aHrCUs/oyHlFXSWyIg8bAaDPwck1I84K2EaNcGwJS
-# V3lR5aub1GCUr4ZZxW66p0xokGsERPybhK9ZCXmcVoTGlVQisw==
+# AgEVMC8GCSqGSIb3DQEJBDEiBCCeuh/PVtxy++ye+TI7AJvpdwPIVQuWBzXz2hwg
+# a/dpXDALBgkqhkiG9w0BAQEEggEAlvuOc62DBADsy0JkRT1n7M529E4FUX/64N3p
+# Tq0C6GCDCd7v5njGP4vHCa8ZEdSt+rXgdABJ8Iuz3XOfJ9WtCC5dHTO1jOrpuo49
+# JVao6DU8fAkciDOt8WbgAmTIoqPYALGEalj8MKD26rTuFThma5bM1cP2Ullx3+Ri
+# OaOwYFqa/4hO02SDnQbHkf4QgPBbV5xUob35rXXL3eJW0r1AstiMLKUfL6plI2X+
+# kWUpne1aONGxdVwJocpQOFI5j0tQEb/rayJ/ValqcuP0xgbGQ3k+gZMnws1yXz1n
+# fa2BeYBIVVtmyldWOuq5DC5efBunXLIsek5ERwBNfL+eswKGAg==
 # SIG # End signature block
