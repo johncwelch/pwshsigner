@@ -8,7 +8,7 @@
 
 @{
 	RootModule = 'Set-PowerShellScriptSig.psm1'
-	ModuleVersion = '1.0.1'
+	ModuleVersion = '1.1'
 	GUID = 'da91f9ed-c38f-4e7e-9980-b6d37fb97e23'
 	Author = 'John C. Welch'
 	CompanyName = 'Bynkii.com'
@@ -89,7 +89,7 @@
 			# IconUri = ''
     
 			# ReleaseNotes of this module
-			ReleaseNotes = 'First module release'
+			ReleaseNotes = 'Updated to allow multiple files with mac version, see CHANGELOOG'
     
 			# Prerelease string of this module
 			# Prerelease = ''
