@@ -71,13 +71,13 @@ function enterCertPassword {
 
 function getMultipleFilesMac {
 	$fileListString = ""
-	
+
 	#always returns a string
 	$theFiles = "choose file of type {`"ps1`",`"psd1`",`"psm1`",`"ps1xml`"} with multiple selections allowed"|/usr/bin/osascript -so
 	#manage user hitting cancel button
 	if ($theFiles.Contains("execution error: User canceled")) {
-		
-		#user cancelled. Split the string into an array on the :, grab the last part of the error message (-1 is always the last item) 
+
+		#user cancelled. Split the string into an array on the :, grab the last part of the error message (-1 is always the last item)
 		#and remove any leading/trailing whitespace. This becomes the dialog message
 		$theErrorMessage = $theFiles.Split(":")[-1].Trim()
 
@@ -105,7 +105,7 @@ function stringToListConversion {
 
 	#create an empty list of strings
 	$thePathCollection = [System.Collections.Generic.List[string]]::New()
-		
+
 	#run split on ", alias ", this converts it to an array of strings. The first item [0] always stars with "alias "
 	#which is manageable. also removes a lot of leading spaces, but we'll trim those anyway
 	$filePathArray = $filePathString.Split(", alias ")
@@ -166,7 +166,7 @@ function displayInfoDialog {
 		[Parameter(Mandatory = $true)][string] $dialogText,
 		[Parameter(Mandatory = $true)][string] $dialogTitle
 	)
-	
+
 	#dd command
 	"display dialog `"$dialogText`" with title `"$dialogTitle`""|/usr/bin/osascript -so
 }
@@ -211,6 +211,7 @@ function Set-WinPowerShellSig {
 	If you're using this module it's assumed you know your way around PowerShell and script signing at least at a conceptual level.
 	#>
 
+	[CmdletBinding(SupportsShouldProcess)]
 	param (
 		[Parameter(Mandatory = $false)][string] $scriptPath = ""
 	)
@@ -338,6 +339,7 @@ function Set-MacPowerShellSig {
 	If you're using this module it's assumed you know your way around PowerShell and script signing at least at a conceptual level.
 	#>
 
+	[CmdletBinding(SupportsShouldProcess)]
 	param (
 		[Parameter(Mandatory = $false)][string] $scriptPath = ""
 	)
@@ -418,7 +420,7 @@ function Set-MacPowerShellSig {
 	if ([string]::IsNullOrEmpty($scriptPath)) {
 		#path param wasn't used
 		#choose file dialog, returns a string of path(s) or "cancelled"
-		$fileString = getMultipleFilesMac 
+		$fileString = getMultipleFilesMac
 
 		#test for cancelled
 		if ($fileString -eq "cancelled") {
@@ -430,7 +432,7 @@ function Set-MacPowerShellSig {
 
 			#we have our array, now lets convert them to POSIX paths
 			$posixPaths = aliasToPosixPath -filePathArray $fileList
-			
+
 			#we have our posix paths and the cert info, lets sign them!
 			foreach ($item in $posixPaths) {
 				Set-OpenAuthenticodeSignature -Path $item -Certificate $cert
